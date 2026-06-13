@@ -1,0 +1,465 @@
+{
+  "info": {
+    "name": "JourneyFaith API",
+    "_postman_id": "jf-api-collection-v1",
+    "description": "Collection completa da API JourneyFaith — Auth, Exercises, User Progress, Content, Gamification",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:4000/api/v1", "type": "string" },
+    { "key": "admin_token", "value": "", "type": "string" },
+    { "key": "user_token", "value": "", "type": "string" },
+    { "key": "user_id", "value": "", "type": "string" },
+    { "key": "exercise_id", "value": "", "type": "string" },
+    { "key": "trail_id", "value": "", "type": "string" },
+    { "key": "character_id", "value": "", "type": "string" },
+    { "key": "achievement_id", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/register", "host": ["{{base_url}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Isaias Silva\",\n  \"email\": \"isaiasilva@gmail.com\",\n  \"password\": \"Is@i@s1989\",\n  \"denomination\": \"evangelical\",\n  \"daily_goal_minutes\": 10\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const r = pm.response.json();",
+                "if (r.data?.token) pm.collectionVariables.set('user_token', r.data.token);",
+                "if (r.data?.user?.id) pm.collectionVariables.set('user_id', r.data.user.id);"
+              ],
+              "type": "text/javascript"
+            }
+          }]
+        },
+        {
+          "name": "Login (User)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"isaiasilva@gmail.com\",\n  \"password\": \"Is@i@s1989\"\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const r = pm.response.json();",
+                "if (r.data?.token) pm.collectionVariables.set('user_token', r.data.token);",
+                "if (r.data?.user?.id) pm.collectionVariables.set('user_id', r.data.user.id);"
+              ],
+              "type": "text/javascript"
+            }
+          }]
+        },
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@journeyfaith.com\",\n  \"password\": \"admin123\"\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const r = pm.response.json();",
+                "if (r.data?.token) pm.collectionVariables.set('admin_token', r.data.token);",
+                "if (r.data?.user?.id) pm.collectionVariables.set('user_id', r.data.user.id);"
+              ],
+              "type": "text/javascript"
+            }
+          }]
+        },
+        {
+          "name": "Me (Current User)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/auth/me", "host": ["{{base_url}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Content",
+      "item": [
+        {
+          "name": "Listar Trilhas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/content/trails", "host": ["{{base_url}}"], "path": ["content", "trails"] }
+          }
+        },
+        {
+          "name": "Detalhes da Trilha",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/content/trails/{{trail_id}}", "host": ["{{base_url}}"], "path": ["content", "trails", "{{trail_id}}"] }
+          }
+        },
+        {
+          "name": "Detalhes da Lição (com exercícios)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/content/lessons/{{lesson_id}}", "host": ["{{base_url}}"], "path": ["content", "lessons", "{{lesson_id}}"] }
+          }
+        },
+        {
+          "name": "Completar Lição",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{user_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/content/lessons/{{lesson_id}}/complete", "host": ["{{base_url}}"], "path": ["content", "lessons", "{{lesson_id}}", "complete"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"xp_earned\": 15,\n  \"mistakes\": 1,\n  \"time_seconds\": 120\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exercises (Public)",
+      "item": [
+        {
+          "name": "Listar Exercícios Ativos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/exercises",
+              "host": ["{{base_url}}"],
+              "path": ["exercises"],
+              "query": [
+                { "key": "level", "value": "1", "disabled": true },
+                { "key": "type", "value": "multiple_choice", "disabled": true },
+                { "key": "limit", "value": "50", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar Exercício por ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/exercises/{{exercise_id}}", "host": ["{{base_url}}"], "path": ["exercises", "{{exercise_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exercises (Admin CRUD)",
+      "item": [
+        {
+          "name": "Listar Todos (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/exercises",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "exercises"],
+              "query": [
+                { "key": "level", "value": "1", "disabled": true },
+                { "key": "type", "value": "multiple_choice", "disabled": true },
+                { "key": "is_premium", "value": "false", "disabled": true },
+                { "key": "is_active", "value": "true", "disabled": true },
+                { "key": "page", "value": "1", "disabled": true },
+                { "key": "limit", "value": "50", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por ID (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/exercises/{{exercise_id}}", "host": ["{{base_url}}"], "path": ["admin", "exercises", "{{exercise_id}}"] }
+          }
+        },
+        {
+          "name": "Criar Exercício",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/exercises", "host": ["{{base_url}}"], "path": ["admin", "exercises"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"multiple_choice\",\n  \"question\": \"Qual livro da Bíblia começa com 'No princípio'?\",\n  \"options_text\": [\"Gênesis\", \"Êxodo\", \"Levítico\", \"Números\"],\n  \"correct_answer\": \"Gênesis\",\n  \"explanation\": \"Gênesis é o primeiro livro da Bíblia.\",\n  \"verse_reference\": \"Gênesis 1:1\",\n  \"level\": 1,\n  \"xp_reward\": 10,\n  \"order\": 1,\n  \"is_active\": true,\n  \"is_premium\": false\n}"
+            },
+            "event": [{
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data?._id) pm.collectionVariables.set('exercise_id', r.data._id);"
+                ],
+                "type": "text/javascript"
+              }
+            }]
+          }
+        },
+        {
+          "name": "Criar Exercício Emoji",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/exercises", "host": ["{{base_url}}"], "path": ["admin", "exercises"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"emoji_guess\",\n  \"question\": \"Qual personagem bíblico estes emojis representam?\",\n  \"emoji_hint\": \"🪵🌊🕊️🌈\",\n  \"options_text\": [\"Noé\", \"Moisés\", \"Abraão\", \"Elias\"],\n  \"correct_answer\": \"Noé\",\n  \"explanation\": \"Noé construiu a arca (madeira), o dilúvio (água), a pomba e o arco-íris.\",\n  \"verse_reference\": \"Gênesis 6-9\",\n  \"level\": 2,\n  \"xp_reward\": 20,\n  \"order\": 31,\n  \"is_active\": true,\n  \"is_premium\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar Exercício Áudio",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/exercises", "host": ["{{base_url}}"], "path": ["admin", "exercises"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"audio_recite\",\n  \"question\": \"Recite o versículo em voz alta:\",\n  \"options_text\": [],\n  \"correct_answer\": \"porque deus amou o mundo de tal maneira que deu o seu filho unigênito\",\n  \"explanation\": \"João 3:16 é um dos versículos mais conhecidos da Bíblia.\",\n  \"verse_reference\": \"João 3:16\",\n  \"level\": 2,\n  \"xp_reward\": 30,\n  \"order\": 37,\n  \"is_active\": true,\n  \"is_premium\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar Exercício",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/exercises/{{exercise_id}}", "host": ["{{base_url}}"], "path": ["admin", "exercises", "{{exercise_id}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": true,\n  \"xp_reward\": 15,\n  \"is_premium\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir Exercício",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/exercises/{{exercise_id}}", "host": ["{{base_url}}"], "path": ["admin", "exercises", "{{exercise_id}}"] }
+          }
+        },
+        {
+          "name": "Seed 39 Exercícios",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/exercises/seed", "host": ["{{base_url}}"], "path": ["admin", "exercises", "seed"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gamification",
+      "item": [
+        {
+          "name": "Minha Liga",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/gamification/leagues/me", "host": ["{{base_url}}"], "path": ["gamification", "leagues", "me"] }
+          }
+        },
+        {
+          "name": "Leaderboard Global",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/gamification/leagues/leaderboard/global", "host": ["{{base_url}}"], "path": ["gamification", "leagues", "leaderboard", "global"] }
+          }
+        },
+        {
+          "name": "Conquistas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/gamification/achievements", "host": ["{{base_url}}"], "path": ["gamification", "achievements"] }
+          }
+        },
+        {
+          "name": "Comprar Streak Freeze",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/gamification/streak/freeze", "host": ["{{base_url}}"], "path": ["gamification", "streak", "freeze"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Progress",
+      "item": [
+        {
+          "name": "Obter Progresso do Usuário",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{user_token}}" }],
+            "url": { "raw": "{{base_url}}/users/{{user_id}}/progress", "host": ["{{base_url}}"], "path": ["users", "{{user_id}}", "progress"] }
+          }
+        },
+        {
+          "name": "Completar Exercício",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{user_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/users/{{user_id}}/exercises/{{exercise_id}}/complete", "host": ["{{base_url}}"], "path": ["users", "{{user_id}}", "exercises", "{{exercise_id}}", "complete"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 100,\n  \"mistakes_count\": 0,\n  \"time_spent_seconds\": 45\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users (CRUD)",
+      "item": [
+        {
+          "name": "Listar Usuários",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/users", "host": ["{{base_url}}"], "path": ["users"] }
+          }
+        },
+        {
+          "name": "Buscar Usuário por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/users/{{user_id}}", "host": ["{{base_url}}"], "path": ["users", "{{user_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trails (Public)",
+      "item": [
+        { "name": "[APP] Listar trilhas publicadas", "request": { "method": "GET", "url": { "raw": "{{base_url}}/trails", "host": ["{{base_url}}"], "path": ["trails"] } } },
+        { "name": "[APP] Trilha por slug", "request": { "method": "GET", "url": { "raw": "{{base_url}}/trails/slug/fundamentos-vida-de-jesus", "host": ["{{base_url}}"], "path": ["trails", "slug", "fundamentos-vida-de-jesus"] } } },
+        { "name": "[APP] Trilha por ID", "request": { "method": "GET", "url": { "raw": "{{base_url}}/trails/{{trail_id}}", "host": ["{{base_url}}"], "path": ["trails", "{{trail_id}}"] } } }
+      ]
+    },
+    {
+      "name": "Trails (Admin)",
+      "item": [
+        { "name": "[ADMIN] Listar trilhas", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/trails?page=1&limit=50", "host": ["{{base_url}}"], "path": ["admin", "trails"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "50" }] } } },
+        { "name": "[ADMIN] Stats de trilhas", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/trails/stats", "host": ["{{base_url}}"], "path": ["admin", "trails", "stats"] } } },
+        { "name": "[ADMIN] Criar trilha", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/trails", "host": ["{{base_url}}"], "path": ["admin", "trails"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Trilha Teste\",\n  \"description\": \"Trilha criada via Postman para teste.\",\n  \"is_core\": true,\n  \"unlock_level\": 1,\n  \"estimated_hours\": 2,\n  \"is_published\": false\n}" } }, "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json();", "if (r.data?._id) pm.collectionVariables.set('trail_id', r.data._id);"], "type": "text/javascript" } }] },
+        { "name": "[ADMIN] Atualizar trilha", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/trails/{{trail_id}}", "host": ["{{base_url}}"], "path": ["admin", "trails", "{{trail_id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"is_published\": true\n}" } } },
+        { "name": "[ADMIN] Excluir trilha", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/trails/{{trail_id}}", "host": ["{{base_url}}"], "path": ["admin", "trails", "{{trail_id}}"] } } },
+        { "name": "[ADMIN] Reordenar trilhas", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/trails/reorder", "host": ["{{base_url}}"], "path": ["admin", "trails", "reorder"] }, "body": { "mode": "raw", "raw": "{\n  \"items\": [{\"id\": \"{{trail_id}}\", \"order\": 1}]\n}" } } },
+        { "name": "[ADMIN] Seed 20 trilhas", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/trails/seed", "host": ["{{base_url}}"], "path": ["admin", "trails", "seed"] } } }
+      ]
+    },
+    {
+      "name": "Characters (Public)",
+      "item": [
+        { "name": "[APP] Listar personagens ativos", "request": { "method": "GET", "url": { "raw": "{{base_url}}/characters", "host": ["{{base_url}}"], "path": ["characters"] } } },
+        { "name": "[APP] Personagem por ID", "request": { "method": "GET", "url": { "raw": "{{base_url}}/characters/{{character_id}}", "host": ["{{base_url}}"], "path": ["characters", "{{character_id}}"] } } }
+      ]
+    },
+    {
+      "name": "Characters (Admin)",
+      "item": [
+        { "name": "[ADMIN] Listar personagens", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/characters", "host": ["{{base_url}}"], "path": ["admin", "characters"] } } },
+        { "name": "[ADMIN] Stats de personagens", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/characters/stats", "host": ["{{base_url}}"], "path": ["admin", "characters", "stats"] } } },
+        { "name": "[ADMIN] Criar personagem", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/characters", "host": ["{{base_url}}"], "path": ["admin", "characters"] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Teste\",\n  \"title\": \"O Testador\",\n  \"biblical_reference\": \"Teste 1:1\",\n  \"biblical_story\": \"Personagem criado para teste da API.\",\n  \"sprite_url\": \"https://placehold.co/200x280/4A90E2/white?text=TESTE\",\n  \"color_hex\": \"#4A90E2\",\n  \"rarity\": \"common\",\n  \"dialogues\": [{\"type\": \"greeting\", \"text\": \"Olá!\"}]\n}" } }, "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json();", "if (r.data?._id) pm.collectionVariables.set('character_id', r.data._id);"], "type": "text/javascript" } }] },
+        { "name": "[ADMIN] Atualizar personagem", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/characters/{{character_id}}", "host": ["{{base_url}}"], "path": ["admin", "characters", "{{character_id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"is_active\": false\n}" } } },
+        { "name": "[ADMIN] Toggle ativo/inativo", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/characters/{{character_id}}/toggle-active", "host": ["{{base_url}}"], "path": ["admin", "characters", "{{character_id}}", "toggle-active"] } } },
+        { "name": "[ADMIN] Excluir personagem", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/characters/{{character_id}}", "host": ["{{base_url}}"], "path": ["admin", "characters", "{{character_id}}"] } } },
+        { "name": "[ADMIN] Seed 9 personagens", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/characters/seed", "host": ["{{base_url}}"], "path": ["admin", "characters", "seed"] } } }
+      ]
+    },
+    {
+      "name": "Achievements (Public)",
+      "item": [
+        { "name": "[APP] Listar conquistas ativas", "request": { "method": "GET", "url": { "raw": "{{base_url}}/achievements", "host": ["{{base_url}}"], "path": ["achievements"] } } },
+        { "name": "[APP] Conquistas do usuário", "request": { "method": "GET", "url": { "raw": "{{base_url}}/achievements/user/{{user_id}}", "host": ["{{base_url}}"], "path": ["achievements", "user", "{{user_id}}"] } } },
+        { "name": "[APP] Conquista por ID", "request": { "method": "GET", "url": { "raw": "{{base_url}}/achievements/{{achievement_id}}", "host": ["{{base_url}}"], "path": ["achievements", "{{achievement_id}}"] } } }
+      ]
+    },
+    {
+      "name": "Achievements (Admin)",
+      "item": [
+        { "name": "[ADMIN] Listar conquistas", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/achievements?page=1&limit=20", "host": ["{{base_url}}"], "path": ["admin", "achievements"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "20" }] } } },
+        { "name": "[ADMIN] Stats de conquistas", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/achievements/stats", "host": ["{{base_url}}"], "path": ["admin", "achievements", "stats"] } } },
+        { "name": "[ADMIN] Criar conquista", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/achievements", "host": ["{{base_url}}"], "path": ["admin", "achievements"] }, "body": { "mode": "raw", "raw": "{\n  \"key\": \"test_achievement\",\n  \"name\": \"Conquista Teste\",\n  \"description\": \"Conquista criada via API para teste.\",\n  \"icon_emoji\": \"🧪\",\n  \"trigger\": { \"type\": \"lesson_count\", \"value\": 1 },\n  \"rarity\": \"common\",\n  \"xp_reward\": 10,\n  \"mana_reward\": 2\n}" } }, "event": [{ "listen": "test", "script": { "exec": ["const r = pm.response.json();", "if (r.data?._id) pm.collectionVariables.set('achievement_id', r.data._id);"], "type": "text/javascript" } }] },
+        { "name": "[ADMIN] Atualizar conquista", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/achievements/{{achievement_id}}", "host": ["{{base_url}}"], "path": ["admin", "achievements", "{{achievement_id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"is_active\": false\n}" } } },
+        { "name": "[ADMIN] Excluir conquista", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/achievements/{{achievement_id}}", "host": ["{{base_url}}"], "path": ["admin", "achievements", "{{achievement_id}}"] } } },
+        { "name": "[ADMIN] Seed 16 conquistas", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/achievements/seed", "host": ["{{base_url}}"], "path": ["admin", "achievements", "seed"] } } }
+      ]
+    },
+    {
+      "name": "Leagues (Public)",
+      "item": [
+        { "name": "[APP] Liga atual do usuário", "request": { "method": "GET", "url": { "raw": "{{base_url}}/leagues/me?user_id={{user_id}}&tier=bronze", "host": ["{{base_url}}"], "path": ["leagues", "me"], "query": [{ "key": "user_id", "value": "{{user_id}}" }, { "key": "tier", "value": "bronze" }] } }, "description": "Retorna ranking da liga, posição do usuário e zonas de promoção/rebaixamento." },
+        { "name": "[APP] Entrar numa liga", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/leagues/join", "host": ["{{base_url}}"], "path": ["leagues", "join"] }, "body": { "mode": "raw", "raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"tier\": \"bronze\"\n}" } } },
+        { "name": "[APP] Adicionar XP na liga", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/leagues/xp", "host": ["{{base_url}}"], "path": ["leagues", "xp"] }, "body": { "mode": "raw", "raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"tier\": \"bronze\",\n  \"xp_amount\": 10\n}" } } }
+      ]
+    },
+    {
+      "name": "Leagues (Admin)",
+      "item": [
+        { "name": "[ADMIN] Stats de ligas", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/leagues/stats", "host": ["{{base_url}}"], "path": ["admin", "leagues", "stats"] } } },
+        { "name": "[ADMIN] Seed ligas da semana", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/leagues/seed", "host": ["{{base_url}}"], "path": ["admin", "leagues", "seed"] } } },
+        { "name": "[ADMIN] Processar promoção semanal", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }], "url": { "raw": "{{base_url}}/admin/leagues/process-weekly", "host": ["{{base_url}}"], "path": ["admin", "leagues", "process-weekly"] } }, "description": "IRREVERSÍVEL. Processa promoções e rebaixamentos da semana." }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:4000/health", "host": ["http://localhost:4000"], "path": ["health"] }
+          }
+        }
+      ]
+    }
+  ]
+}

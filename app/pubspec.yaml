@@ -1,0 +1,74 @@
+name: journeyfaith
+description: "JourneyFaith - Aprendizado bíblico gamificado, inspirado no Duolingo."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Estado
+  flutter_riverpod: ^2.5.1
+
+  # Navegação
+  go_router: ^14.0.2
+
+  # HTTP
+  dio: ^5.4.3
+
+  # Cache local (offline-first)
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+
+  # Animações
+  lottie: ^3.1.2
+  flutter_animate: ^4.5.0
+  confetti: ^0.7.0
+
+  # Firebase (Push Notifications — ativado no Prompt 18)
+  firebase_core: ^2.30.1
+  firebase_messaging: ^14.9.1
+
+  # Fontes
+  google_fonts: ^6.2.1
+
+  # Utils
+  shared_preferences: ^2.2.3
+
+
+  # Fotos
+  image_picker: ^1.0.7
+
+  # Auth — token seguro
+  flutter_secure_storage: ^9.2.2
+  animated_text_kit: ^4.3.0
+  flutter_tts: ^4.2.5
+  audioplayers: ^6.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  build_runner: ^2.4.9
+  isar_generator: ^3.1.0+1
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/dove_icon.png"
+  adaptive_icon_background: "#E8EDF2"
+  adaptive_icon_foreground: "assets/images/dove_icon.png"
+  min_sdk_android: 21
+  web:
+    generate: false
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/lottie/

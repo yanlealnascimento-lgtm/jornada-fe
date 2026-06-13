@@ -13,7 +13,7 @@ class AppConfig {
 
   static String get apiBaseUrl {
     if (_injectedUrl.isNotEmpty) return _injectedUrl;
-    if (kReleaseMode) return 'https://api.journeyfaith.app/api/v1';
+    if (kReleaseMode) return 'https://journeyfaith-api-production.up.railway.app/api/v1';
     // Debug Android: funciona tanto em emulador (10.0.2.2) quanto em
     // device físico via "adb reverse tcp:4000 tcp:4000" (localhost)
     if (Platform.isAndroid) return 'http://192.168.1.6:4000/api/v1';
